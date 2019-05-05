@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<script>
+    var data = new FormData();
+    data.append("username", "ali@mail.com");
+    data.append("password", "123");
+
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+
+    xhr.addEventListener("readystatechange", function () {
+        if (this.readyState === 4) {
+            console.log(this.responseText);
+        }
+    });
+
+    xhr.open("POST", "http://harajgram.ir/uniengine/userApi/authentication/login");
+
+    xhr.send(data);
+</script>
+
+</body>
+</html>

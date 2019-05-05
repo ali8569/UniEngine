@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+    "-//Hibernate/Hibernate Configuration DTD//EN"
+    "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+    <property name="connection.url">jdbc:mariadb://harajgram.ir:3306/uni_engine</property>
+    <property name="connection.driver_class">org.mariadb.jdbc.Driver</property>
+      <mapping class="ir.markazandroid.UniEngine.persistance.entity.UserEntity"/>
+      <mapping class="ir.markazandroid.UniEngine.persistance.entity.CampaignEntity"/>
+      <mapping class="ir.markazandroid.UniEngine.persistance.entity.DeviceEntity"/>
+      <mapping class="ir.markazandroid.UniEngine.persistance.entity.PlayListEntity"/>
+      <mapping class="ir.markazandroid.UniEngine.persistance.entity.ScheduleEntity"/>
+      <mapping class="ir.markazandroid.UniEngine.persistance.entity.ScheduleHasTimeLineEntity"/>
+      <mapping class="ir.markazandroid.UniEngine.persistance.entity.TimeLineEntity"/>
+      <mapping class="ir.markazandroid.UniEngine.persistance.entity.TimeLineDateEntity"/>
+      <mapping class="ir.markazandroid.UniEngine.persistance.entity.TimeLineHasCampaignEntity"/>
+      <mapping class="ir.markazandroid.UniEngine.persistance.entity.AdminEntity"/>
+      <mapping class="ir.markazandroid.UniEngine.persistance.entity.PrivilegeEntity"/>
+      <mapping class="ir.markazandroid.UniEngine.persistance.entity.RoleEntity"/>
+      <mapping class="ir.markazandroid.UniEngine.persistance.entity.LayoutEntity"/>
+      <!-- <property name="connection.username"/> -->
+    <!-- <property name="connection.password"/> -->
+
+    <!-- DB schema will be updated if needed -->
+    <!-- <property name="hbm2ddl.auto">update</property> -->
+  </session-factory>
+</hibernate-configuration>
