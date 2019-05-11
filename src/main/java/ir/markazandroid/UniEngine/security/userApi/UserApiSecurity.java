@@ -16,6 +16,8 @@ import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.session.web.http.CookieSerializer;
+import org.springframework.session.web.http.DefaultCookieSerializer;
 import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -55,7 +57,6 @@ public class UserApiSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers("/userApi/authentication/**")
                 .permitAll()
                 .antMatchers("/userApi/**").hasRole(UniEngineApplication.ROLE_USER.getRole())
-
                 .and()
                 .csrf().disable()
 
@@ -93,12 +94,19 @@ public class UserApiSecurity extends WebSecurityConfigurerAdapter {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("*"); // @Value: http://localhost:8080
+        config.addAllowedOrigin("http://localhost:4200"); // @Value: http://localhost:8080
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
+    }
+
+    @Bean
+    public CookieSerializer cookieSerializer() {
+        DefaultCookieSerializer cookieSerializer = new DefaultCookieSerializer();
+        cookieSerializer.setSameSite(null);
+        return cookieSerializer;
     }
 
 }
