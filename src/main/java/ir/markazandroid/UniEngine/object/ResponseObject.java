@@ -4,6 +4,8 @@ import ir.markazandroid.UniEngine.JSONParser.annotations.JSON;
 import org.springframework.http.ResponseEntity;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -61,9 +63,11 @@ public class ResponseObject implements Serializable {
 
     public static class Builder{
         private ResponseObject responseObject;
+        private Map<String, Object> map;
 
         public Builder(){
             responseObject=new ResponseObject();
+            map = new HashMap<>();
         }
 
         public Builder status(int status){
@@ -81,9 +85,14 @@ public class ResponseObject implements Serializable {
             return this;
         }
 
-        public ResponseEntity<ResponseObject> build(){
+        public Builder param(String key, Object value) {
+            map.put(key, value);
+            return this;
+        }
+
+        public ResponseEntity build() {
             return ResponseEntity.status(responseObject.getStatus())
-                    .body(responseObject);
+                    .body(map.isEmpty() ? responseObject : map);
         }
     }
 }

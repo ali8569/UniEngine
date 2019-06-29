@@ -1,6 +1,7 @@
 package ir.markazandroid.UniEngine.persistance.entity;
 
 import ir.markazandroid.UniEngine.JSONParser.annotations.JSON;
+import ir.markazandroid.UniEngine.object.EFile;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -95,6 +96,7 @@ public class PlayListEntity implements Serializable {
         this.data = data;
     }
 
+    @JSON
     @Basic
     @Column(name = "name", nullable = true, length = -1)
     public String getName() {
@@ -134,18 +136,18 @@ public class PlayListEntity implements Serializable {
 
     @JSON
     public static class DataEntity implements Serializable{
-        private ir.markazandroid.UniEngine.object.EFile EFile;
+        private EFile eFile;
         private int order;
         private int duration;
         private String dataType;
 
-        @JSON(classType = JSON.CLASS_TYPE_OBJECT,clazz = ir.markazandroid.UniEngine.object.EFile.class)
-        public ir.markazandroid.UniEngine.object.EFile getEFile() {
-            return EFile;
+        @JSON(classType = JSON.CLASS_TYPE_OBJECT, clazz = EFile.class)
+        public EFile geteFile() {
+            return eFile;
         }
 
-        public void setEFile(ir.markazandroid.UniEngine.object.EFile EFile) {
-            this.EFile = EFile;
+        public void seteFile(EFile eFile) {
+            this.eFile = eFile;
         }
 
         @JSON

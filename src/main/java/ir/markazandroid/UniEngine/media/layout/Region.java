@@ -16,11 +16,15 @@ public final class Region implements Serializable {
     private String id;
 
     Region(Side left, Side top, Side right, Side bottom) {
+        if (!left.getOrientation().equals(Orientation.vertical) || !right.getOrientation().equals(Orientation.vertical)
+                || !top.getOrientation().equals(Orientation.horizontal) || !bottom.getOrientation().equals(Orientation.horizontal))
+            throw new RuntimeException("wrong orientations");
+
         this.left = left;
         this.top = top;
         this.right = right;
         this.bottom = bottom;
-        id= StringUtils.arrayToDelimitedString(new String[]{left.getId(),top.getId(),right.getId(),bottom.getId()},"_");
+        id = StringUtils.arrayToDelimitedString(new String[]{left.getId(), top.getId(), right.getId(), bottom.getId()}, "_");
     }
 
     public Side getLeft() {
@@ -59,7 +63,7 @@ public final class Region implements Serializable {
         return id;
     }
 
-    public boolean isDependentOnSide(Side side){
+    public boolean isDependentOnSide(Side side) {
         return getLeft().equals(side)
                 || getTop().equals(side)
                 || getRight().equals(side)

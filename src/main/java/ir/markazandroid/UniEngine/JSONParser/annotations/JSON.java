@@ -1,12 +1,12 @@
 package ir.markazandroid.UniEngine.JSONParser.annotations;
 
-import ir.markazandroid.UniEngine.JSONParser.JsonProfile;
 import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
@@ -25,6 +25,7 @@ public @interface JSON {
     String CLASS_TYPE_OBJECT="object";
     String CLASS_TYPE_JSON_ARRAY="jsonarray";
     String CLASS_TYPE_JSON_OBJECT="jsonobject";
+    String CLASS_TYPE_MAP = "map";
 
     @AliasFor("name")
     String value() default "";

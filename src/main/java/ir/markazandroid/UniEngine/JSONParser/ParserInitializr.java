@@ -1,6 +1,8 @@
 package ir.markazandroid.UniEngine.JSONParser;
 
 import ir.markazandroid.UniEngine.JSONParser.annotations.JSON;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
@@ -11,6 +13,7 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 public class ParserInitializr {
 
     private final String PARSER_INITIALIZR_TAG="ParserInitializr: ";
+    private static final Logger logger = LoggerFactory.getLogger(ParserInitializr.class);
 
     private Parser parser;
 
@@ -19,7 +22,7 @@ public class ParserInitializr {
     }
 
     public void findAnnotatedClasses() {
-        System.out.println(PARSER_INITIALIZR_TAG+"Finding JSON class candidates");
+        logger.info("Finding JSON class candidates");
         ClassPathScanningCandidateComponentProvider provider = createComponentScanner();
         for (BeanDefinition beanDef : provider.findCandidateComponents("ir.markazandroid.UniEngine")) {
             addClass(beanDef);
@@ -39,10 +42,10 @@ public class ParserInitializr {
             Class<?> cl = Class.forName(beanDef.getBeanClassName());
             if (cl.isAnnotationPresent(JSON.class)){
                 parser.addWithSuperClasses(cl);
-                System.out.println(PARSER_INITIALIZR_TAG+"Added class= "+cl.getName());
+                logger.info("Added class= " + cl.getName());
             }
         } catch (Exception e) {
-            System.err.println("Got exception: " + e.getMessage());
+            logger.error("Got exception: " + e.getMessage(), e);
         }
     }
 }

@@ -1,5 +1,7 @@
 package ir.markazandroid.UniEngine.persistance.entity;
 
+import ir.markazandroid.UniEngine.media.layout.LayoutData;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
@@ -12,7 +14,12 @@ import java.util.Objects;
 public class LayoutEntity implements Serializable {
     private long layoutId;
     private Long userId;
-    private String data;
+
+    //Should not be Accessed outside DAO Layer
+    private String dataString;
+
+    //transients
+    private LayoutData layoutData;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,11 +45,11 @@ public class LayoutEntity implements Serializable {
     @Basic
     @Column(name = "data", nullable = false, length = -1)
     public String getData() {
-        return data;
+        return dataString;
     }
 
     public void setData(String data) {
-        this.data = data;
+        this.dataString = data;
     }
 
     @Override
@@ -52,14 +59,21 @@ public class LayoutEntity implements Serializable {
         LayoutEntity that = (LayoutEntity) o;
         return layoutId == that.layoutId &&
                 Objects.equals(userId, that.userId) &&
-                Objects.equals(data, that.data);
+                Objects.equals(dataString, that.dataString);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(layoutId, userId, data);
+        return Objects.hash(layoutId, userId, dataString);
     }
 
 
+    @Transient
+    public LayoutData getLayoutData() {
+        return layoutData;
+    }
 
+    public void setLayoutData(LayoutData layoutData) {
+        this.layoutData = layoutData;
+    }
 }

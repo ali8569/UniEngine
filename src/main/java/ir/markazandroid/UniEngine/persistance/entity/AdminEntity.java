@@ -1,6 +1,7 @@
 package ir.markazandroid.UniEngine.persistance.entity;
 
 import ir.markazandroid.UniEngine.JSONParser.annotations.JSON;
+import ir.markazandroid.UniEngine.conf.session.MainPrincipalObject;
 import ir.markazandroid.UniEngine.object.PrivateStorageOwner;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,7 +19,7 @@ import java.util.Objects;
 @JSON
 @Entity
 @Table(name = "admin", schema = "uni_engine")
-public class AdminEntity implements Serializable, UserDetails, PrivateStorageOwner {
+public class AdminEntity implements Serializable, UserDetails, PrivateStorageOwner, MainPrincipalObject {
     private int adminId;
     private String name;
     private String username;
@@ -166,5 +167,11 @@ public class AdminEntity implements Serializable, UserDetails, PrivateStorageOwn
     public long getMaxCapacity() {
         //5 GB
         return 100*1024*1024L;
+    }
+
+    @Transient
+    @Override
+    public String getUniqueKey() {
+        return getClass().getSimpleName() + "_" + adminId;
     }
 }

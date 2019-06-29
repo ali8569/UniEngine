@@ -16,6 +16,7 @@ public class PrivilegeEntity implements Serializable, GrantedAuthority {
     public static final String ACCESS_USER_DASHBOARD="ACCESS_USER_DASHBOARD";
     public static final String ACCESS_ADMIN_DASHBOARD="ACCESS_ADMIN_DASHBOARD";
     public static final String ACCESS_PL_SERVICES="ACCESS_PL_SERVICES";
+    public static final String ACCESS_DEVICE_API = "ACCESS_DEVICE_API";
     public static final String STORAGE_WRITE_PREFIX="STORAGE_WRITE_PREFIX_";
     public static final String STORAGE_READ_PREFIX="STORAGE_READ_PREFIX_";
 

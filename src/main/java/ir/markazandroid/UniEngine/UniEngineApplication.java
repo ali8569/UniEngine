@@ -3,16 +3,14 @@ package ir.markazandroid.UniEngine;
 import ir.markazandroid.UniEngine.JSONParser.JsonHttpMessageConverter;
 import ir.markazandroid.UniEngine.JSONParser.Parser;
 import ir.markazandroid.UniEngine.JSONParser.ParserInitializr;
-import ir.markazandroid.UniEngine.controller.userApi.interfaces.UserApiStorageController;
 import ir.markazandroid.UniEngine.notification.NotificationSender;
 import ir.markazandroid.UniEngine.notification.NotificationSenderImp;
-import ir.markazandroid.UniEngine.object.*;
-import ir.markazandroid.UniEngine.persistance.entity.PlayListEntity;
 import ir.markazandroid.UniEngine.persistance.entity.PrivilegeEntity;
 import ir.markazandroid.UniEngine.persistance.entity.RoleEntity;
-import ir.markazandroid.UniEngine.persistance.entity.UserEntity;
 import ir.markazandroid.UniEngine.sms.KavenegarApi;
 import okhttp3.OkHttpClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -42,9 +40,12 @@ import java.util.concurrent.TimeUnit;
 public class UniEngineApplication extends SpringBootServletInitializer {
 
     public static final RoleEntity ROLE_USER=new RoleEntity("USER",new PrivilegeEntity(PrivilegeEntity.ACCESS_USER_DASHBOARD));
-    public static final RoleEntity ROLE_ADMIN=new RoleEntity("ADMIN",new PrivilegeEntity(PrivilegeEntity.ACCESS_ADMIN_DASHBOARD));
+    public static final RoleEntity ROLE_DEVICE = new RoleEntity("DEVICE", new PrivilegeEntity(PrivilegeEntity.ACCESS_DEVICE_API));
+    public static final RoleEntity ROLE_ADMIN = new RoleEntity("ADMIN", new PrivilegeEntity(PrivilegeEntity.ACCESS_ADMIN_DASHBOARD));
 	public static final RoleEntity ROLE_PL_AGENT=new RoleEntity("PL_AGENT",new PrivilegeEntity(PrivilegeEntity.ACCESS_PL_SERVICES)
             ,new PrivilegeEntity(PrivilegeEntity.ACCESS_ADMIN_DASHBOARD));
+
+    private static final Logger logger = LoggerFactory.getLogger(UniEngineApplication.class);
 
 	public static void main(String[] args) {
 		SpringApplication.run(UniEngineApplication.class, args).registerShutdownHook();
@@ -57,7 +58,7 @@ public class UniEngineApplication extends SpringBootServletInitializer {
 	}
 
 	@Bean
-	public JsonHttpMessageConverter parser() throws NoSuchMethodException {
+    public JsonHttpMessageConverter parser() {
 		JsonHttpMessageConverter parser = new JsonHttpMessageConverter();
 		ParserInitializr initializr = new ParserInitializr(parser);
 		initializr.findAnnotatedClasses();
@@ -93,7 +94,7 @@ public class UniEngineApplication extends SpringBootServletInitializer {
 				.readTimeout(60, TimeUnit.SECONDS)
 				.writeTimeout(60, TimeUnit.SECONDS)
 				.build();
-		System.out.println("Http client created");
+        logger.info("OkHttp Client Created");
 		return okHttpClient;
 	}
 
@@ -143,7 +144,7 @@ public class UniEngineApplication extends SpringBootServletInitializer {
 
     @EventListener
     public void onEvent(Object o){
-        System.out.println("Event: "+o.toString());
+        logger.info("Event: " + o.toString());
     }
 
     /*@Bean

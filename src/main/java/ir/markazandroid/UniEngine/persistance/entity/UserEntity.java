@@ -1,16 +1,12 @@
 package ir.markazandroid.UniEngine.persistance.entity;
 
 import ir.markazandroid.UniEngine.JSONParser.annotations.JSON;
-import ir.markazandroid.UniEngine.object.PrivateStorageOwner;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import ir.markazandroid.UniEngine.conf.session.MainPrincipalObject;
+import ir.markazandroid.UniEngine.object.User;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -19,7 +15,7 @@ import java.util.Objects;
 @JSON
 @Entity
 @Table(name = "user", schema = "uni_engine")
-public class UserEntity implements Serializable, UserDetails, PrivateStorageOwner {
+public class UserEntity extends User implements Serializable, MainPrincipalObject {
 
     public static final int STATUS_DISABLED=-2;
     public static final int STATUS_NOT_VERIFIED=-1;
@@ -27,11 +23,8 @@ public class UserEntity implements Serializable, UserDetails, PrivateStorageOwne
     public static final int STATUS_ACTIVE=2;
 
     private long userId;
-    private String username;
-    private String password;
     private String passwordRetype;
     private Timestamp createTime;
-    private ArrayList<? extends GrantedAuthority> authorities;
     private int status;
     private String phone;
     private String email;
@@ -40,6 +33,9 @@ public class UserEntity implements Serializable, UserDetails, PrivateStorageOwne
     private String lastName;
     private Integer roleId;
     private RoleEntity role;
+
+    //Transients
+    private Params params;
 
     @JSON
     @Id
@@ -56,57 +52,24 @@ public class UserEntity implements Serializable, UserDetails, PrivateStorageOwne
     @JSON
     @Basic
     @Column(name = "username", nullable = false, length = 200)
+    @Override
     public String getUsername() {
         return username;
     }
 
+    @Override
     public void setUsername(String username) {
         this.username = username;
     }
 
-    @Transient
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Transient
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Transient
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Transient
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
-    @Transient
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
-    }
-
-    public void setAuthorities(ArrayList<? extends GrantedAuthority> authorities) {
-        this.authorities = authorities;
-    }
 
     @Basic
     @Column(name = "password", nullable = false, length = 50)
+    @Override
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     @JSON(classType = JSON.CLASS_TYPE_TIMESTAMP)
     @Basic
@@ -240,14 +203,37 @@ public class UserEntity implements Serializable, UserDetails, PrivateStorageOwne
         return 5*1024*1024*1024L;
     }
 
-    /**
-     * Should be called within active session from managed bean object
-     */
     @Transient
-    public void makePrivileges(){
-        ArrayList<GrantedAuthority> authorities = getRole()!=null?getRole().getAllAuthorities():new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(PrivilegeEntity.STORAGE_WRITE_PREFIX+getStoragePrefix()+"/**"));
-        authorities.add(new SimpleGrantedAuthority(PrivilegeEntity.STORAGE_READ_PREFIX+getStoragePrefix()+"/**"));
-        setAuthorities(authorities);
+    @Override
+    public String getUniqueKey() {
+        return buildUniqueKey(userId);
+    }
+
+    @Transient
+    public Params getParams() {
+        return params;
+    }
+
+    public void setParams(Params params) {
+        this.params = params;
+    }
+
+    public static String buildUniqueKey(long userId) {
+        return UserEntity.class.getSimpleName() + "_" + userId;
+    }
+
+
+    @JSON
+    public static class Params {
+        private int deviceCount;
+
+        @JSON
+        public int getDeviceCount() {
+            return deviceCount;
+        }
+
+        public void setDeviceCount(int deviceCount) {
+            this.deviceCount = deviceCount;
+        }
     }
 }

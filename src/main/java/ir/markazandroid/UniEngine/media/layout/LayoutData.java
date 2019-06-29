@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Ali on 4/16/2019.
  */
+@JSON
 public class LayoutData implements Serializable{
 
     private ArrayList<SideData> sides;
@@ -25,7 +26,6 @@ public class LayoutData implements Serializable{
         regions=layout.getRegions().parallelStream()
                 .map(RegionData::new)
                 .collect(Collectors.toCollection(ArrayList::new));
-
 
     }
 
@@ -49,6 +49,7 @@ public class LayoutData implements Serializable{
         this.sides = sides;
     }
 
+    @JSON
     public static class SideData implements Serializable {
         private int percent;
         private String orientation;
@@ -80,6 +81,7 @@ public class LayoutData implements Serializable{
         }
     }
 
+    @JSON
     public static class RegionData implements Serializable{
         private String leftId;
         private String topId;

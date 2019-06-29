@@ -4,7 +4,6 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.ServletException;
@@ -31,7 +30,9 @@ public class RestAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, org.springframework.security.core.Authentication authentication) throws IOException, ServletException {
 
 
-        request.getRequestDispatcher(forwardUrl).forward(request, response);
+        //request.getRequestDispatcher(forwardUrl).forward(request, response);
+
+        response.sendRedirect(request.getContextPath() + forwardUrl);
 
         SavedRequest savedRequest
                 = requestCache.getRequest(request, response);

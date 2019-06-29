@@ -3,6 +3,7 @@ package ir.markazandroid.UniEngine.service.interfaces;
 import ir.markazandroid.UniEngine.exception.VerificationCodeAlreadySentException;
 import ir.markazandroid.UniEngine.exception.VerificationCodeIncorrectException;
 import ir.markazandroid.UniEngine.exception.VerificationSmsExpiredException;
+import ir.markazandroid.UniEngine.persistance.entity.DeviceEntity;
 import ir.markazandroid.UniEngine.persistance.entity.UserEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -46,4 +47,9 @@ public interface UserService extends UserDetailsService {
      * @param userEntity
      */
     void changeUserDetails(UserEntity userEntity);
+
+    void initUserParams(UserEntity userEntity);
+
+    List<DeviceEntity> getUserOnlineDevices(long userId);
+
 }

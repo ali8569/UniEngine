@@ -39,6 +39,8 @@ public class JsonHttpMessageConverter extends Parser implements HttpMessageConve
         return (clazz.getSimpleName().equals("Collection")
                 || clazz.getSimpleName().equals("List")
                 || clazz.getSimpleName().equals("LinkedHashMap")
+                || clazz.getSimpleName().equals("HashMap")
+                || clazz.getSimpleName().equals("JSONObject")
                 || clazz.getSimpleName().equals("ArrayList")
                 || classes.containsKey(clazz.getName()))
                 && mediaType != null
@@ -51,6 +53,8 @@ public class JsonHttpMessageConverter extends Parser implements HttpMessageConve
                 && clazz.getSimpleName().equals("LinkedHashMap")
                 || (clazz.getSimpleName().equals("Collection")
                 || clazz.getSimpleName().equals("List")
+                || clazz.getSimpleName().equals("HashMap")
+                || clazz.getSimpleName().equals("JSONObject")
                 || clazz.getSimpleName().equals("LinkedHashMap")
                 || clazz.getSimpleName().equals("ArrayList")
                 || clazz.equals(JsonProfile.class)
@@ -76,6 +80,7 @@ public class JsonHttpMessageConverter extends Parser implements HttpMessageConve
         try {
             if (stringBuilder.charAt(0) == '{') {
                 JSONObject jsonObject = new JSONObject(stringBuilder.toString());
+                if (clazz.equals(JSONObject.class)) return jsonObject;
                 return get(clazz, jsonObject);
             } else {
                 JSONArray jsonArray = new JSONArray(stringBuilder.toString());
@@ -91,6 +96,7 @@ public class JsonHttpMessageConverter extends Parser implements HttpMessageConve
     public void write(Object o, MediaType contentType, HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
         String s;
         if (o instanceof Map) s = new JSONObject((Map) o).toString();
+        else if (o instanceof JSONObject) s = o.toString();
         else if (o instanceof Collection) s = getArray((Collection) o).toString();
         else if (o instanceof JsonProfile && ((JsonProfile) o).getEntity() instanceof Collection) s = getArray((JsonProfile) o).toString();
         else s = get(o).toString();

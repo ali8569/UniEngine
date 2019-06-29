@@ -17,8 +17,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Coded by Ali on 30/06/2017.
- * latest update 1/05/2019.
- * version 1.7.2
+ * latest update 22/06/2019.
+ * version 1.8.2
  */
 
 @SuppressWarnings("unchecked")
@@ -31,6 +31,23 @@ public class Parser {
     }
 
     public void addClass(Class c) throws NoSuchMethodException {
+        classes.put(c.getName(), extractClassAnnotatedMethods(c));
+    }
+
+    public void addWithSuperClasses(Class c) throws NoSuchMethodException {
+        ArrayList<Methods> mMethods = new ArrayList<>();
+        String className = c.getName();
+        do {
+            mMethods.addAll(extractClassAnnotatedMethods(c));
+            c = c.getSuperclass();
+        }
+        while (!c.equals(Object.class));
+
+        classes.put(className, mMethods);
+    }
+
+
+    private ArrayList<Methods> extractClassAnnotatedMethods(Class c) throws NoSuchMethodException {
         Method[] methods = c.getDeclaredMethods();
         ArrayList<Methods> mMethods = new ArrayList<>();
         for (Method method : methods) {
@@ -43,19 +60,7 @@ public class Parser {
                 }
             }
         }
-        classes.put(c.getName(), mMethods);
-    }
-
-    public void addWithSuperClasses(Class c) throws NoSuchMethodException {
-        ArrayList<Methods> mMethods = new ArrayList<>();
-
-        do {
-            addClass(c);
-            c=c.getSuperclass();
-        }
-        while (!c.equals(Object.class));
-
-        classes.put(c.getName(), mMethods);
+        return mMethods;
     }
 
     private <T> T getObject(Class<T> c, JSONObject json) throws IllegalAccessException, InstantiationException, InvocationTargetException {
@@ -224,8 +229,23 @@ public class Parser {
             } catch (NullPointerException e) {
                 return null;
             }
-        }
-        else
+        } else if (valueType.equalsIgnoreCase(JSON.CLASS_TYPE_MAP)) {
+            try {
+                JSONObject output = new JSONObject();
+                Map<String, Object> map = (Map) method.invoke(source);
+                map.forEach((key, value) -> {
+                    if (classes.containsKey(value.getClass().getName()))
+                        output.put(key, get(value));
+                    else if (value instanceof Map)
+                        output.put(key, (Map) value);
+                    else
+                        output.put(key, value);
+                });
+                return output;
+            } catch (NullPointerException e) {
+                return null;
+            }
+        } else
             return method.invoke(source);
     }
 
@@ -248,6 +268,8 @@ public class Parser {
 
         else if (valueType.equalsIgnoreCase(JSON.CLASS_TYPE_OBJECT))
             method.invoke(source, get(methods.annotation.clazz(), (JSONObject) parameter));
+        else if (valueType.equalsIgnoreCase(JSON.CLASS_TYPE_MAP))
+            method.invoke(source, ((JSONObject) parameter).toMap());
         else
             method.invoke(source, parameter);
     }

@@ -1,5 +1,9 @@
 package ir.markazandroid.UniEngine.persistance.entity;
 
+import ir.markazandroid.UniEngine.JSONParser.annotations.JSON;
+import ir.markazandroid.UniEngine.conf.session.MainPrincipalObject;
+import ir.markazandroid.UniEngine.object.User;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
@@ -11,13 +15,18 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "device", schema = "uni_engine")
-public class DeviceEntity implements Serializable {
+@JSON
+public class DeviceEntity extends User implements Serializable, MainPrincipalObject {
+
+    public static final byte STATUS_NOT_ASSIGNED = 1;
+    public static final byte STATUS_ACTIVATED = 2;
+    public static final byte STATUS_DISABLED = -1;
+
     private long deviceId;
     private Long userId;
     private String name;
     private Timestamp createTime;
     private String uuid;
-    private String fcmToken;
     private Timestamp lastVisit;
     private byte status;
     private String passKey;
@@ -25,7 +34,10 @@ public class DeviceEntity implements Serializable {
     private String appVersion;
     private String simNumber;
     private Integer simOperator;
+    private Integer roleId;
+    private RoleEntity role;
 
+    @JSON
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "device_id", nullable = false)
@@ -37,6 +49,7 @@ public class DeviceEntity implements Serializable {
         this.deviceId = deviceId;
     }
 
+    @JSON
     @Basic
     @Column(name = "user_id", nullable = true)
     public Long getUserId() {
@@ -47,6 +60,7 @@ public class DeviceEntity implements Serializable {
         this.userId = userId;
     }
 
+    @JSON
     @Basic
     @Column(name = "name", nullable = true, length = 50)
     public String getName() {
@@ -57,6 +71,7 @@ public class DeviceEntity implements Serializable {
         this.name = name;
     }
 
+    @JSON(classType = JSON.CLASS_TYPE_TIMESTAMP)
     @Basic
     @Column(name = "create_time", nullable = true)
     public Timestamp getCreateTime() {
@@ -78,16 +93,6 @@ public class DeviceEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "fcm_token", nullable = false, length = -1)
-    public String getFcmToken() {
-        return fcmToken;
-    }
-
-    public void setFcmToken(String fcmToken) {
-        this.fcmToken = fcmToken;
-    }
-
-    @Basic
     @Column(name = "last_visit", nullable = true)
     public Timestamp getLastVisit() {
         return lastVisit;
@@ -97,6 +102,7 @@ public class DeviceEntity implements Serializable {
         this.lastVisit = lastVisit;
     }
 
+    @JSON
     @Basic
     @Column(name = "status", nullable = false)
     public byte getStatus() {
@@ -106,6 +112,7 @@ public class DeviceEntity implements Serializable {
     public void setStatus(byte status) {
         this.status = status;
     }
+
 
     @Basic
     @Column(name = "pass_key", nullable = true, length = 14)
@@ -117,6 +124,7 @@ public class DeviceEntity implements Serializable {
         this.passKey = passKey;
     }
 
+    @JSON(classType = JSON.CLASS_TYPE_TIMESTAMP)
     @Basic
     @Column(name = "assign_date", nullable = true)
     public Date getAssignDate() {
@@ -157,6 +165,26 @@ public class DeviceEntity implements Serializable {
         this.simOperator = simOperator;
     }
 
+    @Basic
+    @Column(name = "role_id", nullable = true)
+    public Integer getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Integer roleId) {
+        this.roleId = roleId;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_id", referencedColumnName = "role_id", insertable = false, updatable = false)
+    public RoleEntity getRole() {
+        return role;
+    }
+
+    public void setRole(RoleEntity role) {
+        this.role = role;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -168,7 +196,6 @@ public class DeviceEntity implements Serializable {
                 Objects.equals(name, that.name) &&
                 Objects.equals(createTime, that.createTime) &&
                 Objects.equals(uuid, that.uuid) &&
-                Objects.equals(fcmToken, that.fcmToken) &&
                 Objects.equals(lastVisit, that.lastVisit) &&
                 Objects.equals(passKey, that.passKey) &&
                 Objects.equals(assignDate, that.assignDate) &&
@@ -179,7 +206,25 @@ public class DeviceEntity implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(deviceId, userId, name, createTime, uuid, fcmToken, lastVisit, status, passKey, assignDate, appVersion, simNumber, simOperator);
+        return Objects.hash(deviceId, userId, name, createTime, uuid, lastVisit, status, passKey, assignDate, appVersion, simNumber, simOperator);
     }
 
+    @Transient
+    @Override
+    public String getStoragePrefix() {
+        return deviceId + "_" + name;
+    }
+
+    @Transient
+    @Override
+    public long getMaxCapacity() {
+        //5 GB
+        return 50 * 1024 * 1024L;
+    }
+
+    @Transient
+    @Override
+    public String getUniqueKey() {
+        return getClass().getSimpleName() + "_" + deviceId;
+    }
 }

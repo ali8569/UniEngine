@@ -6,6 +6,7 @@ import ir.markazandroid.UniEngine.media.layout.Layout;
 import ir.markazandroid.UniEngine.media.layout.Orientation;
 import ir.markazandroid.UniEngine.media.layout.Region;
 import ir.markazandroid.UniEngine.media.layout.Side;
+import ir.markazandroid.UniEngine.media.views.BasicView;
 import ir.markazandroid.UniEngine.media.views.PlayListView;
 import ir.markazandroid.UniEngine.persistance.entity.CampaignEntity;
 import org.w3c.dom.Document;
@@ -24,9 +25,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Created by Ali on 4/22/2019.
@@ -34,7 +32,7 @@ import java.util.stream.Collectors;
 public class ContentHolder {
     
     private Layout layout;
-    private Map<Region,Object> views;
+    private Map<Region, BasicView> views;
 
 
     public ContentHolder(Layout layout) {
@@ -42,16 +40,16 @@ public class ContentHolder {
         views=new HashMap<>();
     }
 
-    public void assignViewToRegion(Region region,Object view){
+    public void assignViewToRegion(Region region, BasicView view) {
         if (!layout.getRegions().contains(region)) throw new  RuntimeException("Region is not part of Layout");
         views.put(region, view);
     }
 
 
-    public CampaignEntity.Data generateData(){
+    public CampaignEntity.AndroidData generateData() {
         Map<String,Object> extras= new HashMap<>();
-        views.forEach((region, o) -> extras.put(region.getId(),o));
-        return new CampaignEntity.Data(generateXml(),extras);
+        views.forEach((region, o) -> extras.put(region.getId(), o.getExtrasObject()));
+        return new CampaignEntity.AndroidData(generateXml(), extras);
     }
     
     private String generateXml(){
@@ -134,7 +132,7 @@ public class ContentHolder {
         });
     }
 
-    private Map<String,String> getViewAttributes(Object o){
+    private Map<String, String> getViewAttributes(BasicView o) {
         Map<String, String> attributes = new HashMap<>();
         Class clazz = o.getClass();
         do {
@@ -146,7 +144,7 @@ public class ContentHolder {
         return attributes;
     }
 
-    private Map<String,String> getObjectViewAttributes(Object o,Class clazz){
+    private Map<String, String> getObjectViewAttributes(BasicView o, Class clazz) {
         Map<String,String> attributes = new HashMap<>();
         for (Method method:clazz.getDeclaredMethods()){
             XmlAttribute attribute = method.getAnnotation(XmlAttribute.class);
@@ -174,7 +172,7 @@ public class ContentHolder {
         Region tr=layout.newRegion(sv,sh,layout.getRightParentSide(),layout.getBottomParentSide());
 
         ContentHolder holder = new ContentHolder(layout);
-        holder.assignViewToRegion(fr,new PlayListView().getData());
+        holder.assignViewToRegion(fr, new PlayListView());
         holder.assignViewToRegion(sr,new PlayListView());
         holder.assignViewToRegion(tr,new PlayListView());
 

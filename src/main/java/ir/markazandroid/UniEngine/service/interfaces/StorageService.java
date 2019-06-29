@@ -1,18 +1,11 @@
 package ir.markazandroid.UniEngine.service.interfaces;
 
-import com.sun.istack.internal.NotNull;
-import ir.markazandroid.UniEngine.exception.PrivateStorageNECapacityException;
-import ir.markazandroid.UniEngine.exception.StorageAccessDeniedException;
 import ir.markazandroid.UniEngine.object.PrivateStorageOwner;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.Collection;
 
 /**
@@ -44,7 +37,8 @@ public interface StorageService {
     @PreAuthorize(WRITE_WITH_ID)
     String moveFile(PrivateStorageOwner owner,String fileId, String newPrefix, String newName) throws IOException;
 
-    @PreAuthorize(READ_WITH_ID)
+    //TODO
+    //@PreAuthorize(READ_WITH_ID)
     File readFile(String fileId);
 
     String generateFileId(File file);

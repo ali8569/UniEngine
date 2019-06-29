@@ -2,6 +2,7 @@ package ir.markazandroid.UniEngine.util;
 
 import ir.markazandroid.UniEngine.JSONParser.annotations.JSON;
 import ir.markazandroid.UniEngine.object.EFile;
+import ir.markazandroid.UniEngine.persistance.entity.DeviceEntity;
 import org.apache.commons.io.FileUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -236,11 +237,11 @@ public class Utils {
     }
 
     public static String encodeString(String string){
-        return new String(Base64.getEncoder().encode(string.getBytes(StandardCharsets.UTF_8)));
+        return new String(Base64.getUrlEncoder().encode(string.getBytes(StandardCharsets.UTF_8)));
     }
 
     public static String decodeString(String encodedString){
-        return new String(Base64.getDecoder().decode(encodedString.getBytes(StandardCharsets.UTF_8)));
+        return new String(Base64.getUrlDecoder().decode(encodedString.getBytes(StandardCharsets.UTF_8)));
     }
 
     public static String getFileUrl(String fileId,String contextPath){
@@ -254,6 +255,11 @@ public class Utils {
     }
     public static void setEFileUrl(EFile eFile, HttpServletRequest request){
         eFile.setUrl(getEFileUrl(eFile,request));
+    }
+
+    public static boolean isDeviceOnline(DeviceEntity deviceEntity) {
+        return deviceEntity.getLastVisit() != null &&
+                System.currentTimeMillis() - deviceEntity.getLastVisit().getTime() < 90 * 1000L;
     }
 
 }

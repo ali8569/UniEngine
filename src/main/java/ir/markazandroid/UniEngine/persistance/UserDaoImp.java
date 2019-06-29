@@ -1,5 +1,6 @@
 package ir.markazandroid.UniEngine.persistance;
 
+import ir.markazandroid.UniEngine.conf.CacheConfs;
 import ir.markazandroid.UniEngine.persistance.entity.UserEntity;
 import ir.markazandroid.UniEngine.persistance.interfaces.UserDao;
 import ir.markazandroid.UniEngine.util.DaoUtils;
@@ -24,7 +25,6 @@ import java.util.List;
 @Repository
 public class UserDaoImp implements UserDao {
 
-    public static final String CACHE_NAME_COUNTS = "counts";
     public static final String CACHE_KEY_USERS_COUNT="key_user_counts";
 
     @PersistenceContext
@@ -99,7 +99,7 @@ public class UserDaoImp implements UserDao {
         }
     }
 
-    @CacheEvict(cacheNames = CACHE_NAME_COUNTS,key = "T(ir.markazandroid.UniEngine.persistance.UserDaoImp).CACHE_KEY_USERS_COUNT")
+    @CacheEvict(cacheNames = CacheConfs.CACHE_NAME_COUNTS, key = "T(ir.markazandroid.UniEngine.persistance.UserDaoImp).CACHE_KEY_USERS_COUNT")
     @Override
     public void saveUser(UserEntity userEntity) {
        entityManager.persist(userEntity);
@@ -132,7 +132,7 @@ public class UserDaoImp implements UserDao {
     }
 
 
-    @Cacheable(cacheNames = CACHE_NAME_COUNTS,key = "T(ir.markazandroid.UniEngine.persistance.UserDaoImp).CACHE_KEY_USERS_COUNT")
+    @Cacheable(cacheNames = CacheConfs.CACHE_NAME_COUNTS, key = "T(ir.markazandroid.UniEngine.persistance.UserDaoImp).CACHE_KEY_USERS_COUNT")
     @Override
     public long getUsersCount() {
         return ((BigInteger)entityManager.createNativeQuery("SELECT count(*) FROM UniEngine.user")

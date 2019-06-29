@@ -94,6 +94,10 @@ public class Layout implements Serializable {
         return sides.get(id);
     }
 
+    public Region findRegionById(String id) {
+        return regions.get(id);
+    }
+
     public LayoutData toLayoutData(){
         return new LayoutData(this);
     }
